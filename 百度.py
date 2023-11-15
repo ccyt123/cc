@@ -1,5 +1,9 @@
 import requests
 from lxml import etree
+import pymysql
+db = pymysql.connect(host="localhost", port=3306, user="root", password="135790", database='db_python',
+                             charset='utf8')
+cursor=db.cursor()
 if __name__ == '__main__':
     url='https://baike.baidu.com/cms/home/eventsOnHistory/11.json?_=1699197527774'
     headers = {
@@ -19,4 +23,9 @@ if __name__ == '__main__':
         fp.write(year + '\n')
         fp.write(event + '\n')
         fp.write(event_tit + '\n')
+        insert_sql = "INSERT INTO 'w2' ('year', 'event', 'event_tit') VALUES(%s, %s, %s);"
+        cursor.execute(insert_sql, (page_text,str(year),str(event),str(event_tit)))
+        db.commit()
 
+cursor.close()
+db.close()
